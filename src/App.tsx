@@ -69,7 +69,8 @@ function App() {
             <LivsmedelsLista 
               livsmedel={livsmedelsLista} 
               onSelectLivsmedel={handleSelectLivsmedel} 
-              loading={loading} 
+              loading={loading}
+              selectedLivsmedel={selectedLivsmedel}
             />
             
             <div className="pagination">

@@ -6,11 +6,22 @@ interface LivsmedelsListProps {
   livsmedel: Livsmedel[];
   onSelectLivsmedel: (livsmedel: Livsmedel) => void;
   loading: boolean;
+  selectedLivsmedel?: Livsmedel | null;
 }
 
-const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({ livsmedel, onSelectLivsmedel, loading }) => {
-  if (loading) {
-    return <div className="loading">Laddar livsmedel...</div>;
+const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({ 
+  livsmedel, 
+  onSelectLivsmedel, 
+  loading,
+  selectedLivsmedel 
+}) => {  if (loading && livsmedel.length === 0) {
+    return (
+      <div className="livsmedel-list-skeleton">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="livsmedel-item-skeleton"></div>
+        ))}
+      </div>
+    );
   }
 
   if (livsmedel.length === 0) {
@@ -23,7 +34,8 @@ const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({ livsmedel, onSelectLiv
         <LivsmedelsItem 
           key={item.nummer} 
           livsmedel={item} 
-          onClick={onSelectLivsmedel} 
+          onClick={onSelectLivsmedel}
+          isSelected={selectedLivsmedel?.nummer === item.nummer}
         />
       ))}
     </div>

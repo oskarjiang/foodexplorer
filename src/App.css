@@ -24,6 +24,17 @@
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
   margin-top: 1rem;
+  position: relative;
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.content-container.out {
+  opacity: 0.6;
+}
+
+.content-container.in {
+  opacity: 1;
 }
 
 @media (max-width: 768px) {
@@ -55,6 +66,13 @@
   background-color: #e0e0e0;
 }
 
+.livsmedel-item.selected {
+  background-color: #e3f2fd;
+  border-left: 4px solid #4285f4;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
 .livsmedel-item h3 {
   margin-top: 0;
   margin-bottom: 0.5rem;
@@ -69,6 +87,35 @@
   border-radius: 8px;
   padding: 1.5rem;
   text-align: left;
+  position: relative;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(66, 133, 244, 0.2);
+  border-radius: 50%;
+  border-top-color: #4285f4;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .nutrients-table {
@@ -114,8 +161,8 @@
 .loading {
   padding: 2rem;
   text-align: center;
-  font-style: italic;
   color: #666;
+  opacity: 0.7;
 }
 
 .no-data {
@@ -145,6 +192,12 @@
   padding: 1rem;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.macro-nutrient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .macro-nutrient h4 {
@@ -159,4 +212,39 @@
   font-size: 1.25rem;
   font-weight: 500;
   color: #4285f4;
+}
+
+/* Skeleton loading elements */
+.skeleton-text {
+  background-color: #e0e0e0;
+  border-radius: 4px;
+  display: inline-block;
+  min-width: 50px;
+  height: 1em;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-row td {
+  padding: 0.5rem;
+}
+
+/* Skeleton list items for a smoother loading experience */
+.livsmedel-list-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.livsmedel-item-skeleton {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+  height: 100px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Livsmedel, Naringsvarde, Sprak } from '../types';
 import { fetchNaringsvarden } from '../services/api';
 
@@ -10,26 +10,49 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
   const [macroNutrients, setMacroNutrients] = useState<Naringsvarde[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [fadeState, setFadeState] = useState<'in' | 'out'>('in');
+  const previousLivsmedel = useRef<Livsmedel | null>(null);
+  const previousNutrients = useRef<Naringsvarde[]>([]);
 
   useEffect(() => {
-    const loadMacroNutrients = async () => {
-      if (!livsmedel) return;
-      
-      setIsLoading(true);
-      setErrorMessage(null);
-      try {
-        const data = await fetchNaringsvarden(livsmedel.nummer, Sprak.Svenska);
-        setMacroNutrients(data);
-      } catch (err) {
-        setErrorMessage('Kunde inte hämta näringsvärden.');
-        console.error(`Error fetching nutritional values:`, err);
-      } finally {
-        setIsLoading(false);
+    if (livsmedel && (!previousLivsmedel.current || previousLivsmedel.current.nummer !== livsmedel.nummer)) {
+      // Save current data as previous data
+      if (previousLivsmedel.current && macroNutrients.length > 0) {
+        previousNutrients.current = macroNutrients;
       }
-    };
-
-    loadMacroNutrients();
+      
+      // Start fade out
+      setFadeState('out');
+      
+      // Set a small delay before starting to load
+      const loadTimer = setTimeout(() => {
+        loadMacroNutrients();
+      }, 100);
+      
+      return () => clearTimeout(loadTimer);
+    }
   }, [livsmedel]);
+
+  const loadMacroNutrients = async () => {
+    if (!livsmedel) return;
+    
+    previousLivsmedel.current = livsmedel;
+    setIsLoading(true);
+    setErrorMessage(null);
+    
+    try {
+      const data = await fetchNaringsvarden(livsmedel.nummer, Sprak.Svenska);
+      
+      // Start fade in with new data
+      setMacroNutrients(data);
+      setFadeState('in');
+    } catch (err) {
+      setErrorMessage('Kunde inte hämta näringsvärden.');
+      console.error(`Error fetching nutritional values:`, err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   if (!livsmedel) {
     return <div className="livsmedel-details">Ingen livsmedel vald</div>;
   }
@@ -44,6 +67,96 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
   const fat = findNutrient('FAT');
   const carbs = findNutrient('CHO');
   const fiber = findNutrient('FIBT');
+  const renderNutrientCards = (nutrients: Naringsvarde[]) => {
+    // Find key macronutrients
+    const findNutrient = (code: string) => {
+      return nutrients.find(n => n.euroFIRkod === code);
+    };
+
+    const energy = findNutrient('ENERC');
+    const protein = findNutrient('PROT');
+    const fat = findNutrient('FAT');
+    const carbs = findNutrient('CHO');
+    const fiber = findNutrient('FIBT');
+
+    return (
+      <div className="macro-nutrients">
+        <div className="macro-nutrient">
+          <h4>Energi</h4>
+          {energy ? (
+            <p>{energy.varde} {energy.enhet || 'kcal'}</p>
+          ) : (
+            <p className="skeleton-text">&nbsp;</p>
+          )}
+        </div>
+        <div className="macro-nutrient">
+          <h4>Protein</h4>
+          {protein ? (
+            <p>{protein.varde} {protein.enhet || 'g'}</p>
+          ) : (
+            <p className="skeleton-text">&nbsp;</p>
+          )}
+        </div>
+        <div className="macro-nutrient">
+          <h4>Fett</h4>
+          {fat ? (
+            <p>{fat.varde} {fat.enhet || 'g'}</p>
+          ) : (
+            <p className="skeleton-text">&nbsp;</p>
+          )}
+        </div>
+        <div className="macro-nutrient">
+          <h4>Kolhydrater</h4>
+          {carbs ? (
+            <p>{carbs.varde} {carbs.enhet || 'g'}</p>
+          ) : (
+            <p className="skeleton-text">&nbsp;</p>
+          )}
+        </div>
+        <div className="macro-nutrient">
+          <h4>Fiber</h4>
+          {fiber ? (
+            <p>{fiber.varde} {fiber.enhet || 'g'}</p>
+          ) : (
+            <p className="skeleton-text">&nbsp;</p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderNutrientTable = (nutrients: Naringsvarde[]) => {
+    return (
+      <table className="nutrients-table">
+        <thead>
+          <tr>
+            <th>Näringsämne</th>
+            <th>Värde</th>
+            <th>Enhet</th>
+          </tr>
+        </thead>
+        <tbody>
+          {nutrients.length > 0 ? (
+            nutrients.map((naringsvarde: Naringsvarde, index: number) => (
+              <tr key={index}>
+                <td>{naringsvarde.namn}</td>
+                <td>{naringsvarde.varde}</td>
+                <td>{naringsvarde.enhet || ''}</td>
+              </tr>
+            ))
+          ) : (
+            Array.from({ length: 10 }).map((_, index) => (
+              <tr key={index} className="skeleton-row">
+                <td><div className="skeleton-text">&nbsp;</div></td>
+                <td><div className="skeleton-text">&nbsp;</div></td>
+                <td><div className="skeleton-text">&nbsp;</div></td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    );
+  };
 
   return (
     <div className="livsmedel-details">
@@ -51,66 +164,24 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
       <p>ID: {livsmedel.nummer}</p>
       {livsmedel.livsmedelsgrupp && <p>Grupp: {livsmedel.livsmedelsgrupp}</p>}
       
-      {isLoading ? (
-        <div className="loading">Laddar näringsvärden...</div>
-      ) : errorMessage ? (
-        <div className="error">{errorMessage}</div>
-      ) : (
-        <>
-          <h3>Makronäringsvärden (per 100g):</h3>
-          <div className="macro-nutrients">
-            {energy && (
-              <div className="macro-nutrient">
-                <h4>Energi</h4>
-                <p>{energy.varde} {energy.enhet || 'kcal'}</p>
-              </div>
-            )}
-            {protein && (
-              <div className="macro-nutrient">
-                <h4>Protein</h4>
-                <p>{protein.varde} {protein.enhet || 'g'}</p>
-              </div>
-            )}
-            {fat && (
-              <div className="macro-nutrient">
-                <h4>Fett</h4>
-                <p>{fat.varde} {fat.enhet || 'g'}</p>
-              </div>
-            )}
-            {carbs && (
-              <div className="macro-nutrient">
-                <h4>Kolhydrater</h4>
-                <p>{carbs.varde} {carbs.enhet || 'g'}</p>
-              </div>
-            )}
-            {fiber && (
-              <div className="macro-nutrient">
-                <h4>Fiber</h4>
-                <p>{fiber.varde} {fiber.enhet || 'g'}</p>
-              </div>
-            )}
-          </div>
-          
-          <h3>Detaljerade näringsvärden:</h3>
-          <table className="nutrients-table">
-            <thead>
-              <tr>
-                <th>Näringsämne</th>
-                <th>Värde</th>
-                <th>Enhet</th>
-              </tr>
-            </thead>
-            <tbody>
-              {macroNutrients.map((naringsvarde: Naringsvarde, index: number) => (
-                <tr key={index}>
-                  <td>{naringsvarde.namn}</td>
-                  <td>{naringsvarde.varde}</td>
-                  <td>{naringsvarde.enhet || ''}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
+      <div className={`content-container ${fadeState} ${isLoading ? 'loading' : ''}`}>
+        {errorMessage ? (
+          <div className="error">{errorMessage}</div>
+        ) : (
+          <>
+            <h3>Makronäringsvärden (per 100g):</h3>
+            {renderNutrientCards(macroNutrients)}
+            
+            <h3>Detaljerade näringsvärden:</h3>
+            {renderNutrientTable(macroNutrients)}
+          </>
+        )}
+      </div>
+      
+      {isLoading && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+        </div>
       )}
     </div>
   );
