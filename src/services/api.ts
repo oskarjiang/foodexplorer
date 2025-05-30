@@ -9,9 +9,15 @@ const API_VERSION = '1'; // Using the default version from swagger
 export const fetchLivsmedel = async (
   offset: number = 0,
   limit: number = 20,
-  sprak: Sprak = Sprak.Svenska
+  sprak: Sprak = Sprak.Svenska,
+  searchQuery?: string
 ): Promise<Livsmedelsida> => {
-  const url = `${API_BASE_URL}/api/v${API_VERSION}/livsmedel?offset=${offset}&limit=${limit}&sprak=${sprak}`;
+  let url = `${API_BASE_URL}/api/v${API_VERSION}/livsmedel?offset=${offset}&limit=${limit}&sprak=${sprak}`;
+  
+  // Add search query if provided
+  if (searchQuery && searchQuery.trim() !== '') {
+    url += `&namn=${encodeURIComponent(searchQuery.trim())}`;
+  }
   
   try {
     const response = await fetch(url);

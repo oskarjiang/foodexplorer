@@ -1,6 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Livsmedel, Naringsvarde, Sprak } from '../types';
 import { fetchNaringsvarden } from '../services/api';
+import { 
+  Card, CardContent, Typography, Grid, Paper, Box,
+  Skeleton, CircularProgress, Alert, Fade,
+  Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 interface LivsmedelsDetailsProps {
   livsmedel: Livsmedel | null;
@@ -66,7 +72,17 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
   const protein = findNutrient('PROT');
   const fat = findNutrient('FAT');
   const carbs = findNutrient('CHO');
-  const fiber = findNutrient('FIBT');
+  const fiber = findNutrient('FIBT');  // Styled Card component for consistent macro nutrient cards
+  const MacroCard = styled(Card)(({ theme }) => ({
+    height: '100%',
+    textAlign: 'center',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: theme.shadows[4],
+    },
+  }));
+
   const renderNutrientCards = (nutrients: Naringsvarde[]) => {
     // Find key macronutrients
     const findNutrient = (code: string) => {
@@ -79,111 +95,132 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
     const carbs = findNutrient('CHO');
     const fiber = findNutrient('FIBT');
 
-    return (
-      <div className="macro-nutrients">
-        <div className="macro-nutrient">
-          <h4>Energi</h4>
-          {energy ? (
-            <p>{energy.varde} {energy.enhet || 'kcal'}</p>
-          ) : (
-            <p className="skeleton-text">&nbsp;</p>
-          )}
-        </div>
-        <div className="macro-nutrient">
-          <h4>Protein</h4>
-          {protein ? (
-            <p>{protein.varde} {protein.enhet || 'g'}</p>
-          ) : (
-            <p className="skeleton-text">&nbsp;</p>
-          )}
-        </div>
-        <div className="macro-nutrient">
-          <h4>Fett</h4>
-          {fat ? (
-            <p>{fat.varde} {fat.enhet || 'g'}</p>
-          ) : (
-            <p className="skeleton-text">&nbsp;</p>
-          )}
-        </div>
-        <div className="macro-nutrient">
-          <h4>Kolhydrater</h4>
-          {carbs ? (
-            <p>{carbs.varde} {carbs.enhet || 'g'}</p>
-          ) : (
-            <p className="skeleton-text">&nbsp;</p>
-          )}
-        </div>
-        <div className="macro-nutrient">
-          <h4>Fiber</h4>
-          {fiber ? (
-            <p>{fiber.varde} {fiber.enhet || 'g'}</p>
-          ) : (
-            <p className="skeleton-text">&nbsp;</p>
-          )}
-        </div>
-      </div>
+    const macroNutrients = [
+      { name: 'Energi', value: energy, unit: 'kcal' },
+      { name: 'Protein', value: protein, unit: 'g' },
+      { name: 'Fett', value: fat, unit: 'g' },
+      { name: 'Kolhydrater', value: carbs, unit: 'g' },
+      { name: 'Fiber', value: fiber, unit: 'g' },
+    ];    return (
+      <Grid container spacing={2}>
+        {macroNutrients.map((nutrient, index) => (
+          <Box key={index} sx={{ width: { xs: '50%', sm: '33.33%', md: '20%' }, padding: 1 }}>
+            <MacroCard elevation={2}>
+              <CardContent>
+                <Typography variant="h6" component="h4" gutterBottom>
+                  {nutrient.name}
+                </Typography>
+                {nutrient.value ? (
+                  <Typography variant="h5" color="primary">
+                    {nutrient.value.varde} {nutrient.value.enhet || nutrient.unit}
+                  </Typography>
+                ) : (
+                  <Skeleton variant="text" width="60%" height={40} sx={{ mx: 'auto' }} />
+                )}
+              </CardContent>
+            </MacroCard>
+          </Box>
+        ))}
+      </Grid>
     );
   };
-
   const renderNutrientTable = (nutrients: Naringsvarde[]) => {
     return (
-      <table className="nutrients-table">
-        <thead>
-          <tr>
-            <th>Näringsämne</th>
-            <th>Värde</th>
-            <th>Enhet</th>
-          </tr>
-        </thead>
-        <tbody>
-          {nutrients.length > 0 ? (
-            nutrients.map((naringsvarde: Naringsvarde, index: number) => (
-              <tr key={index}>
-                <td>{naringsvarde.namn}</td>
-                <td>{naringsvarde.varde}</td>
-                <td>{naringsvarde.enhet || ''}</td>
-              </tr>
-            ))
-          ) : (
-            Array.from({ length: 10 }).map((_, index) => (
-              <tr key={index} className="skeleton-row">
-                <td><div className="skeleton-text">&nbsp;</div></td>
-                <td><div className="skeleton-text">&nbsp;</div></td>
-                <td><div className="skeleton-text">&nbsp;</div></td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+      <TableContainer component={Paper} sx={{ mt: 2 }}>
+        <Table size="small" aria-label="nutrients table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Näringsämne</TableCell>
+              <TableCell>Värde</TableCell>
+              <TableCell>Enhet</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {nutrients.length > 0 ? (
+              nutrients.map((naringsvarde: Naringsvarde, index: number) => (
+                <TableRow key={index}>
+                  <TableCell>{naringsvarde.namn}</TableCell>
+                  <TableCell>{naringsvarde.varde}</TableCell>
+                  <TableCell>{naringsvarde.enhet || ''}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              Array.from({ length: 10 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton variant="text" width="100%" /></TableCell>
+                  <TableCell><Skeleton variant="text" width="50%" /></TableCell>
+                  <TableCell><Skeleton variant="text" width="30%" /></TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>      </TableContainer>
     );
   };
 
   return (
-    <div className="livsmedel-details">
-      <h2>{livsmedel.namn}</h2>
-      <p>ID: {livsmedel.nummer}</p>
-      {livsmedel.livsmedelsgrupp && <p>Grupp: {livsmedel.livsmedelsgrupp}</p>}
+    <Paper 
+      elevation={2} 
+      sx={{ 
+        p: 3, 
+        position: 'relative', 
+        borderRadius: 2, 
+        overflow: 'hidden' 
+      }}
+    >
+      <Typography variant="h4" component="h2" gutterBottom>
+        {livsmedel.namn}
+      </Typography>
       
-      <div className={`content-container ${fadeState} ${isLoading ? 'loading' : ''}`}>
-        {errorMessage ? (
-          <div className="error">{errorMessage}</div>
-        ) : (
-          <>
-            <h3>Makronäringsvärden (per 100g):</h3>
-            {renderNutrientCards(macroNutrients)}
-            
-            <h3>Detaljerade näringsvärden:</h3>
-            {renderNutrientTable(macroNutrients)}
-          </>
-        )}
-      </div>
+      <Typography variant="body1" gutterBottom>
+        ID: {livsmedel.nummer}
+      </Typography>
+      
+      {livsmedel.livsmedelsgrupp && (
+        <Typography variant="body1" gutterBottom>
+          Grupp: {livsmedel.livsmedelsgrupp}
+        </Typography>
+      )}
+      
+      <Fade in={fadeState === 'in'} timeout={300}>
+        <div>
+          {errorMessage ? (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {errorMessage}
+            </Alert>
+          ) : (
+            <>
+              <Typography variant="h5" component="h3" sx={{ mt: 3, mb: 2 }}>
+                Makronäringsvärden (per 100g):
+              </Typography>
+              {renderNutrientCards(macroNutrients)}
+              
+              <Typography variant="h5" component="h3" sx={{ mt: 4, mb: 2 }}>
+                Detaljerade näringsvärden:
+              </Typography>
+              {renderNutrientTable(macroNutrients)}
+            </>
+          )}
+        </div>
+      </Fade>
       
       {isLoading && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
+        <div style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          right: 0, 
+          bottom: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          zIndex: 1
+        }}>
+          <CircularProgress />
         </div>
       )}
-    </div>
+    </Paper>
   );
 };
 
