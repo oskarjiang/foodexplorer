@@ -7,49 +7,139 @@ import LivsmedelsDetails from './components/LivsmedelsDetails';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import { 
   Container, Box, Typography, AppBar, Toolbar, 
-  Paper, Button, CircularProgress, TextField, InputAdornment
+  Paper, Button, CircularProgress, TextField, InputAdornment,
+  IconButton, Tooltip
 } from '@mui/material';
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import SearchIcon from '@mui/icons-material/Search';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-// Create a theme instance
+// Import Google Fonts - Nunito
+import '@fontsource/nunito/300.css';
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/500.css';
+import '@fontsource/nunito/600.css';
+import '@fontsource/nunito/700.css';
+
+// Create a food-themed instance
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#4285f4',
+      light: '#66bb6a',
+      main: '#4caf50', // Fresh green for healthy food
+      dark: '#388e3c',
+      contrastText: '#fff',
     },
     secondary: {
-      main: '#34a853',
+      light: '#ff7961',
+      main: '#f44336', // Red for energy/protein
+      dark: '#ba000d',
+      contrastText: '#fff',
+    },
+    info: {
+      main: '#2196f3', // Blue for water/hydration
+    },
+    warning: {
+      main: '#ff9800', // Orange for carbohydrates
+    },
+    success: {
+      main: '#8bc34a', // Light green for fiber
     },
     background: {
-      default: '#f5f5f5',
+      default: '#f9f9f7', // Slightly off-white for a natural feel
+      paper: '#ffffff',
+    },
+    text: {
+      primary: '#2e3c42',
+      secondary: '#546e7a',
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Nunito", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2rem',
-      fontWeight: 500,
+      fontSize: '2.2rem',
+      fontWeight: 600,
+      letterSpacing: '-0.015em',
     },
     h2: {
-      fontSize: '1.5rem',
-      fontWeight: 500,
+      fontSize: '1.8rem',
+      fontWeight: 600,
+      letterSpacing: '-0.01em',
     },
     h3: {
-      fontSize: '1.2rem',
+      fontSize: '1.4rem',
       fontWeight: 500,
     },
     h4: {
+      fontSize: '1.2rem',
+      fontWeight: 500,
+    },
+    h5: {
+      fontSize: '1.1rem',
+      fontWeight: 500,
+    },
+    h6: {
       fontSize: '1rem',
       fontWeight: 500,
     },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.6,
+    },
+    body2: {
+      fontSize: '0.875rem',
+      lineHeight: 1.6,
+    },
+  },
+  shape: {
+    borderRadius: 10,
   },
   components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+          backgroundImage: 'linear-gradient(to right, #43a047, #66bb6a)',
+        },
+      },
+    },
     MuiCard: {
       styleOverrides: {
         root: {
+          borderRadius: 12,
+          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
+          overflow: 'hidden',
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
           borderRadius: 8,
+          textTransform: 'none',
+          fontWeight: 600,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+        elevation1: {
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
+        },
+        elevation2: {
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.06)',
         },
       },
     },
@@ -129,11 +219,17 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box className="App">
-        <AppBar position="static">
+        <AppBar position="static" elevation={0}>
           <Toolbar>
+            <RestaurantMenuIcon sx={{ mr: 2, fontSize: '2rem' }} />
             <Typography variant="h1" component="h1" sx={{ flexGrow: 1 }}>
               Livsmedelsdatabasen
             </Typography>
+            <Tooltip title="Livsmedelsverkets databas innehåller näringsinnehåll för livsmedel">
+              <IconButton color="inherit" size="small">
+                <InfoOutlinedIcon />
+              </IconButton>
+            </Tooltip>
           </Toolbar>
         </AppBar>
         
@@ -160,22 +256,49 @@ function App() {
             }}
           >
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Paper sx={{ p: 2, mb: 2, borderRadius: 2 }}>
+              <Paper 
+                sx={{ 
+                  p: 2, 
+                  mb: 2, 
+                  borderRadius: 2,
+                  backgroundImage: 'linear-gradient(to right bottom, rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url("/food-pattern-bg.png")',
+                  backgroundSize: 'cover',
+                  boxShadow: '0 4px 20px rgba(76, 175, 80, 0.1)'
+                }}
+              >
+                <Typography 
+                  variant="h6" 
+                  component="h3" 
+                  gutterBottom 
+                  sx={{ 
+                    color: 'primary.dark',
+                    fontWeight: 600,
+                    fontSize: '1.1rem',
+                    mb: 1
+                  }}
+                >
+                  Hitta livsmedel
+                </Typography>
                 <TextField
                   fullWidth
                   variant="outlined"
-                  label="Sök livsmedel"
                   placeholder="t.ex. äpple, bröd, mjölk..."
                   value={searchQuery}
                   onChange={handleSearchChange}
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <SearchIcon />
+                        <SearchIcon color="primary" />
                       </InputAdornment>
                     ),
+                    sx: {
+                      borderRadius: 3,
+                      backgroundColor: 'white',
+                      '&.Mui-focused': {
+                        boxShadow: '0 0 0 2px rgba(76, 175, 80, 0.25)'
+                      }
+                    }
                   }}
-                  size="small"
                 />
               </Paper>
               
@@ -195,30 +318,62 @@ function App() {
                   mt: 2
                 }}
               >
-                <Paper elevation={1} sx={{ p: 1, borderRadius: 1 }}>
+                <Paper 
+                  elevation={1} 
+                  sx={{ 
+                    p: 1.5, 
+                    borderRadius: 3,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    border: '1px solid rgba(76, 175, 80, 0.2)'
+                  }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 2 }}>
                     <Button 
-                      variant="outlined" 
+                      variant="contained" 
                       color="primary"
                       onClick={handlePreviousPage} 
                       disabled={offset === 0 || loading}
                       startIcon={<NavigateBeforeIcon />}
                       size="small"
+                      sx={{ 
+                        borderRadius: 2,
+                        boxShadow: 'none',
+                        '&:hover': {
+                          boxShadow: '0 2px 8px rgba(76, 175, 80, 0.4)'
+                        }
+                      }}
                     >
                       Föregående
                     </Button>
                     
-                    <Typography variant="body2">
-                      Sida {Math.floor(offset / limit) + 1}
-                    </Typography>
+                    <Box 
+                      sx={{ 
+                        px: 2, 
+                        py: 0.5, 
+                        borderRadius: 2, 
+                        backgroundColor: 'primary.light', 
+                        color: 'white',
+                        fontWeight: 600,
+                        minWidth: '60px',
+                        textAlign: 'center'
+                      }}
+                    >
+                      {Math.floor(offset / limit) + 1}
+                    </Box>
                     
                     <Button 
-                      variant="outlined" 
+                      variant="contained" 
                       color="primary"
                       onClick={handleNextPage} 
                       disabled={loading}
                       endIcon={<NavigateNextIcon />}
                       size="small"
+                      sx={{ 
+                        borderRadius: 2,
+                        boxShadow: 'none',
+                        '&:hover': {
+                          boxShadow: '0 2px 8px rgba(76, 175, 80, 0.4)'
+                        }
+                      }}
                     >
                       Nästa
                     </Button>

@@ -157,7 +157,6 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
         </Table>      </TableContainer>
     );
   };
-
   return (
     <Paper 
       elevation={2} 
@@ -165,10 +164,32 @@ const LivsmedelsDetails: React.FC<LivsmedelsDetailsProps> = ({ livsmedel }) => {
         p: 3, 
         position: 'relative', 
         borderRadius: 2, 
-        overflow: 'hidden' 
+        overflow: 'hidden',
+        backgroundImage: 'linear-gradient(to right bottom, rgba(255,255,255,0.95), rgba(255,255,255,0.98)), url("/food-pattern-bg.png")',
+        backgroundSize: 'cover',
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '4px',
+          background: 'linear-gradient(to right, #f44336, #ff7961)',
+          zIndex: 1
+        }
       }}
     >
-      <Typography variant="h4" component="h2" gutterBottom>
+      <Typography 
+        variant="h4" 
+        component="h2" 
+        gutterBottom
+        sx={{ 
+          color: 'text.primary',
+          fontWeight: 600,
+          borderBottom: '1px dashed rgba(0, 0, 0, 0.1)',
+          pb: 1
+        }}
+      >
         {livsmedel.namn}
       </Typography>
       

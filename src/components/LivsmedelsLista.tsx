@@ -18,20 +18,42 @@ const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({
   onSelectLivsmedel, 
   loading,
   selectedLivsmedel 
-}) => {
-  if (loading && livsmedel.length === 0) {
+}) => {  if (loading && livsmedel.length === 0) {
     return (
       <Paper 
         elevation={2} 
         sx={{ 
           p: 2, 
           borderRadius: 2,
-          height: '100%' 
+          height: '100%',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '4px',
+            background: 'linear-gradient(to right, #66bb6a, #4caf50)',
+          }
         }}
       >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Livsmedel
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Typography 
+            variant="h5" 
+            component="h2" 
+            gutterBottom 
+            sx={{ 
+              color: 'primary.dark',
+              fontWeight: 600,
+              flexGrow: 1,
+              mb: 0
+            }}
+          >
+            Livsmedel
+          </Typography>
+        </Box>
         <Divider sx={{ mb: 2 }} />
         
         <Box sx={{ mt: 2 }}>
@@ -48,7 +70,6 @@ const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({
       </Paper>
     );
   }
-
   if (livsmedel.length === 0) {
     return (
       <Paper 
@@ -56,19 +77,41 @@ const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({
         sx={{ 
           p: 2, 
           borderRadius: 2,
-          height: '100%' 
+          height: '100%',
+          position: 'relative',
+          overflow: 'hidden',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '4px',
+            background: 'linear-gradient(to right, #66bb6a, #4caf50)',
+          }
         }}
       >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Livsmedel
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Typography 
+            variant="h5" 
+            component="h2" 
+            gutterBottom 
+            sx={{ 
+              color: 'primary.dark',
+              fontWeight: 600,
+              flexGrow: 1,
+              mb: 0
+            }}
+          >
+            Livsmedel
+          </Typography>
+        </Box>
         <Divider sx={{ mb: 2 }} />
         
         <Alert severity="info">Inga livsmedel hittades</Alert>
       </Paper>
     );
   }
-
   return (
     <Fade in={true} timeout={500}>
       <Paper 
@@ -77,12 +120,34 @@ const LivsmedelsLista: React.FC<LivsmedelsListProps> = ({
           p: 2, 
           borderRadius: 2,
           height: '100%',
-          overflow: 'auto'
+          overflow: 'auto',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '4px',
+            background: 'linear-gradient(to right, #66bb6a, #4caf50)',
+          }
         }}
       >
-        <Typography variant="h5" component="h2" gutterBottom>
-          Livsmedel
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <Typography 
+            variant="h5" 
+            component="h2" 
+            gutterBottom 
+            sx={{ 
+              color: 'primary.dark',
+              fontWeight: 600,
+              flexGrow: 1,
+              mb: 0
+            }}
+          >
+            Livsmedel
+          </Typography>
+        </Box>
         <Divider sx={{ mb: 2 }} />
         
         <Box sx={{ mt: 2 }}>

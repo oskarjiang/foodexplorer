@@ -15,13 +15,15 @@ interface LivsmedelsItemProps {
 const StyledCard = styled(Card, { 
   shouldForwardProp: (prop) => prop !== 'isSelected' 
 })<{ isSelected?: boolean }>(({ theme, isSelected }) => ({
-  marginBottom: theme.spacing(1),
+  marginBottom: theme.spacing(1.5),
   transition: 'all 0.2s ease-in-out',
   borderLeft: isSelected ? `4px solid ${theme.palette.primary.main}` : 'none',
-  backgroundColor: isSelected ? theme.palette.action.selected : theme.palette.background.paper,
+  backgroundColor: isSelected ? 'rgba(76, 175, 80, 0.08)' : theme.palette.background.paper,
+  boxShadow: isSelected ? '0 3px 14px rgba(76, 175, 80, 0.15)' : theme.shadows[1],
   '&:hover': {
     transform: 'translateY(-2px)',
-    boxShadow: theme.shadows[3],
+    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.1)',
+    borderLeft: isSelected ? `4px solid ${theme.palette.primary.dark}` : `4px solid ${theme.palette.primary.light}`,
   }
 }));
 
