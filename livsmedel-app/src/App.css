@@ -1,0 +1,162 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 1vmin);
+  color: white;
+}
+
+.App-content {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list-container {
+  overflow-y: auto;
+}
+
+.livsmedel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.livsmedel-item {
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.livsmedel-item:hover {
+  background-color: #e0e0e0;
+}
+
+.livsmedel-item h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.livsmedel-item p {
+  margin: 0.25rem 0;
+}
+
+.livsmedel-details {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: left;
+}
+
+.nutrients-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.nutrients-table th,
+.nutrients-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.nutrients-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  font-style: italic;
+  color: #666;
+}
+
+.no-data {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.macro-nutrients {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.macro-nutrient {
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.macro-nutrient h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.macro-nutrient p {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #4285f4;
+}
